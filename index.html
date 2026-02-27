@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sullstore</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(180deg, #0f0f0f, #1a032b);
+  color: white;
+  margin: 0;
+  animation: fadePage 0.8s ease;
+}
+
+@keyframes fadePage {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* HEADER */
+header {
+  background: #6d28d9;
+  padding: 15px;
+  padding-left: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  position: relative;
+}
+
+#produk {
+  animation: slideIn 0.4s ease;
+  will-change: transform;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* BANNER */
+.banner {
+  background: linear-gradient(135deg, #9333ea, #6d28d9);
+  padding: 20px;
+  margin: 15px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(147,51,234,0.6);
+}
+
+.container {
+  padding: 15px;
+}
+
+/* GRID GAME */
+.game-list {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 12px;
+}
+
+/* CARD GAME */
+.game-card {
+  background: #2e1065;
+  padding: 18px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: bold;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+.game-card:hover {
+  background: #4c1d95;
+  transform: scale(1.05);
+}
+
+/* PRODUK GRID */
+#listProduk {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 10px;
+}
+
+.card {
+  background: #2e1065;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.game-card:active,
+.card:active {
+  transform: scale(0.95);
+}
+
+.card:hover {
+  background: #4c1d95;
+}
+}
+
+.selected {
+  border: 2px solid yellow;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+/* BUTTON */
+button {
+  background: red;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+button:hover {
+  background: darkred;
+}
+
+.hidden { display: none; }
+
+.logo {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+  transition: 0.3s;
+}
+
+.logo:hover {
+  transform: scale(1.1);
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  SULLSTORE
+  <img src="logostore.png" class="logo">
+</header>
+
+
+</header>
+
+<div class="banner">
+  <h2>SULLSTORE</h2>
+  <p>Top Up Murah • Cepat • Aman • Terpercaya ✅</p>
+</div>
+
+<p style="text-align:center; font-size:12px; opacity:0.7;">
+OPEN 13:00 AM - 21:00 PM
+</p>
+
+<div class="container">
+
+<!-- HOME -->
+<div id="home">
+<h3>Pilih Game</h3>
+
+<div class="game-list">
+  <div class="game-card" onclick="openGame('ml')">Mobile Legends</div>
+  <div class="game-card" onclick="openGame('ff')">Free Fire</div>
+  <div class="game-card" onclick="openGame('rbx')">Roblox</div>
+  <div class="game-card" onclick="openGame('pubg')">PUBG Mobile</div>
+  <div class="game-card" onclick="openGame('mcgg')">Magic Chess GoGo</div>
+  <div class="game-card" onclick="openGame('bs')">Blood Strike</div>
+  <div class="game-card" onclick="openGame('ssgs')">Super SUS</div>
+</div>
+
+</div>
+
+<!-- PRODUK -->
+<div id="produk" class="hidden">
+<h3 id="judulGame"></h3>
+
+<div id="listProduk"></div>
+
+<input type="text" id="userId" placeholder="User ID">
+<input type="text" id="serverId" placeholder="Server ID (ML saja)">
+
+<select id="payment" onchange="checkPayment()">
+<option>DANA</option>
+<option>OVO</option>
+<option>GOPAY</option>
+<option>QRIS</option>
+</select>
+
+<div id="qrisBox" style="display:none;">
+<p>Scan QRIS:</p>
+<img src="QRIS.png" style="width:150px; border-radius:10px;">
+</div>
+
+<button onclick="beli()">Beli Sekarang</button>
+<p id="status"></p>
+
+<button onclick="back()">⬅ Kembali</button>
+</div>
+
+</div>
+
+<script>
+let game = "";
+let selected = "";
+
+/* DATA (LU EDIT SENDIRI) */
+const data = {
+  ml: [
+    {name:"5 DM", price:"Rp1.600"},
+    {name:"10 DM", price:"Rp2.900"},
+    {name:"22 DM", price:"Rp6.400"},
+    {name:"56 DM", price:"Rp15.200"},
+    {name:"86 DM", price:"Rp22.500"},
+    {name:"112 DM", price:"Rp30.000"},
+    {name:"Weekly Diamond Pass", price:"Rp27.500"},
+    {name:"185 DM", price:"Rp48.000"},
+    {name:"Weekly Diamond Pass X2", price:"Rp54.700"},
+    {name:"257 DM", price:"Rp66.000"},
+    {name:"284 DM", price:"Rp72.500"},
+    {name:"344 DM", price:"Rp88.000"},
+    {name:"429 DM", price:"Rp109.000"},
+    {name:"514 DM", price:"Rp113.000"},
+    {name:"600 DM", price:"Rp150.000"},
+    {name:"706 DM", price:"Rp180.000"},
+    {name:"875 DM", price:"Rp218.500"},
+    {name:"963 DM", price:"Rp257.300"},
+    {name:"1220 DM", price:"Rp293.000"}  
+  ],
+  ff: [
+    {name:"5 DM", price:"Rp1.100"}, 
+    {name:"10 DM", price:"Rp1.900"}, 
+    {name:"20 DM", price:"Rp3.800"}, 
+    {name:"30 DM", price:"Rp5.600"}, 
+    {name:"50 DM", price:"Rp7.500"}, 
+    {name:"70 DM", price:"Rp9.500"},
+    {name:"100 DM", price:"Rp14.600"},
+    {name:"140 DM", price:"Rp19.000"},
+    {name:"250 DM", price:"Rp35.000"},
+    {name:"355 DM", price:"Rp48.000"},
+    {name:"405 DM", price:"Rp55.800"}, 
+    {name:"520 DM", price:"Rp71.000"}, 
+    {name:"720 DM", price:"Rp95.000"}, 
+    {name:"1.080DM", price:"Rp143.000"}
+  ],
+  rbx: [
+    {name:"100 Robux", price:"Rp13.500"},
+    {name:"500 Robux", price:"Rp63.500"},
+    {name:"1,000 Robux", price:"Rp125.000"}
+  ],
+  pubg: [
+    {name:"365 UC", price:"Rp73.000"},
+    {name:"385 UC", price:"Rp94.000"},
+    {name:"445 UC", price:"Rp110.200"}
+  ],
+  mcgg: [
+    {name:"12 DM", price:"Rp3.200"},
+    {name:"28 DM", price:"Rp6.900"},
+    {name:"56 DM", price:"Rp13.000"},
+    {name:"85 DM", price:"Rp20.200"},
+    {name:"1X Weekly Pass", price:"Rp25.500"},
+    {name:"112 DM", price:"Rp25.400"},
+    {name:"170 DM", price:"Rp39.300"},
+    {name:"2X Weekly Pass", price:"Rp50.400"},
+    {name:"240 DM", price:"Rp55.800"}
+  ],
+  bs: [
+    {name:"105 GOLD", price:"R11.500"},
+    {name:"320 GOLD", price:"Rp33.500"},
+    {name:"540 GOLD", price:"Rp55.600"},
+    {name:"645 GS", price:"Rp66.800"},
+    {name:"860 GS", price:"Rp88.700"},
+    {name:"1.100GS", price:"Rp110.900"}
+  ],
+  ssgs: [
+    {name:"100 GS", price:"Rp10.460"},
+    {name:"Weekly Card", price:"Rp11.000"},
+    {name:"310 GS", price:"Rp29.000"}
+  ]
+};
+
+function openGame(g){
+  game = g;
+
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("produk").classList.remove("hidden");
+
+  let namaGame = {
+    ml:"Mobile Legends",
+    ff:"Free Fire",
+    rbx:"Roblox",
+    pubg:"PUBG Mobile",
+    mcgg:"Magic Chess GoGo",
+    bs:"Blood Strike",
+    ssgs:"Super SUS"
+  };
+
+  document.getElementById("judulGame").innerText = "Top Up " + namaGame[g];
+
+  document.getElementById("serverId").style.display =
+    (g === "ml") ? "block" : "none";
+
+  let list = "";
+  data[g].forEach(item => {
+    list += `
+    <div class="card" onclick="pilih(this,'${item.name}')">
+      <b>${item.name}</b><br>${item.price}
+    </div>`;
+  });
+
+  document.getElementById("listProduk").innerHTML = list;
+}
+
+function pilih(el, item){
+  selected = item;
+
+  document.querySelectorAll("#listProduk .card")
+    .forEach(c => c.classList.remove("selected"));
+
+  el.classList.add("selected");
+}
+
+function checkPayment(){
+  let pay = document.getElementById("payment").value;
+
+  document.getElementById("qrisBox").style.display =
+    (pay === "QRIS") ? "block" : "none";
+}
+
+function beli(){
+  let user = document.getElementById("userId").value;
+  let server = document.getElementById("serverId").value;
+  let pay = document.getElementById("payment").value;
+
+  if(user === "" || selected === ""){
+    alert("Lengkapi data!");
+    return;
+  }
+
+  document.getElementById("status").innerText = "Status: Pending...";
+
+  let text =
+  "SULLSTORE ORDER\n" +
+  "Game: " + game + "\n" +
+  "User ID: " + user + "\n" +
+  "Server: " + server + "\n" +
+  "Item: " + selected + "\n" +
+  "Payment: " + pay;
+
+  let nomor = "6282273896548";
+
+setTimeout(()=>{
+  document.getElementById("status").innerText = "Menghubungkan ke WhatsApp...";
+  window.open("https://wa.me/" + nomor + "?text=" + encodeURIComponent(text));
+},1200);
+}
+
+function back(){
+  document.getElementById("home").classList.remove("hidden");
+  document.getElementById("produk").classList.add("hidden");
+
+  selected = "";
+  document.getElementById("status").innerText = "";
+}
+</script>
+
+</body>
+</html>
